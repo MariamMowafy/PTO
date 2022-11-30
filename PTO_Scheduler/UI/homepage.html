@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>Admin</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<link rel="stylesheet" href="style_4.css">
+	<link rel="stylesheet" href="chart_stylesheet.css">
+
+	</head>
+	<body id = 'test'>
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">Admin Dashboard</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="table-wrap">
+						<h2 style="text-align: center;">Saturdays</h2>
+						<table class="table table-striped" id="saturday-table">
+						  <thead>
+						    <tr>
+						      <th>DAY</th>
+						      <th>TYPE</th>
+						      <th>NAME</th>
+						      <!-- <th>Pruchased Price</th> -->
+						      <th>Pool</th>
+							  <th>level</th>
+							  <th>Skill</th>
+						    </tr>
+						  </thead>
+						  <tbody id = "tbody">
+						  </tbody>
+						</table>
+						<br/>
+						<div data-inline="true">
+						<div id="chartDiv" style="width:90%; height:400px; margin:0 auto;" ></div>
+						<!-- <div id="chartDiv1" style="width:50%; height:300px; margin:0 auto;" ></div> -->
+						</div>
+						<br/>
+						<form id="sat_req" style="text-align: center;">
+  
+							<!-- We can have various types of inputs like: Email, Plain Text, Date etc. -->
+							<input id = "poolalevel1" type="number" placeholder="poolalevel1">
+							<input id = "poolalevel2" type="number"  placeholder="poolalevel1">
+							<input id = "poolblevel1" type="number"  placeholder="poolalevel1">
+							<input id = "poolblevel2" type="number" placeholder="poolalevel1">
+							<button id="submit" style=width:100px>submit</button>
+						  </form>
+						<br/>
+						<br/>
+						<h2 style="text-align: center;">Days off</h2>
+						<table class="table table-striped" id="holiday-table">
+							<thead>
+							  <tr>
+								<th>DAY</th>
+								<th>TYPE</th>
+								<th>NAME</th>
+								<th>Pool</th>
+								<!-- <th>Pruchased Price</th> -->
+								<th>Level</th>
+								<th>Skill</th>
+							  </tr>
+							</thead>
+							<tbody id = "tbody_2">
+							</tbody>
+						  </table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<script src="https://code.jscharting.com/2.9.0/jscharting.js"></script>
+    <script  
+    src="./script_3.js">
+  </script>
+	</body>
+
+</html>
