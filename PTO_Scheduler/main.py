@@ -15,17 +15,6 @@ def sendToDB(ownerID, ownerName, ptolist):
     myCursor_l.execute(check_string, val)
     connection_l.commit()
     connection_l.close()
-
-def updateSatDB(date,pool_a_level_1,pool_a_level_2,pool_b_level_1,pool_b_level_2):
-    connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
-    myCursor_l = connection_l.cursor()
-    print("Ready To pass value to DB")
-    check_string = "UPDATE `saturday_req` SET `date`= %s,`pool_a_level_1`=%s ,`pool_a_level_2`=%s,`pool_b_level_1`=%s,`pool_b_level_2`=%s WHERE 'date' = %s"
-    val = (date, pool_a_level_1, pool_a_level_2,pool_b_level_1,pool_b_level_2)
-    print("Sending Request as follows: " + check_string)
-    myCursor_l.execute(check_string, val)
-    connection_l.commit()
-    connection_l.close()
     # my_table_l = myCursor_l.fetchall()
     # print(my_table_l)
     # if len(my_table_l) == 0:
@@ -139,6 +128,17 @@ def fetch_users():
     connection_2.close()
     return my_table_2
 
+def update_saturday(date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2):
+    connection_3 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_3 = connection_3.cursor()
+    print("Ready To pass value to DB")
+    check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
+    val = (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2)
+    print("Sending Request as follows: " + check_string)
+    myCursor_3.execute(check_string, val)
+    connection_3.commit()
+    connection_3.close()
+
 connection = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
 myCursor = connection.cursor()
 print("CONNECTED")
@@ -185,17 +185,6 @@ def post_list():
     # print(wjdata['name'])
     # print(wjdata['pto'])
 
-@app.route('/updateSat', methods=['POST'])
-def sat_list():
-    print("dakhalt savelist")
-    payload = request.json
-    #print(payload['pto'])
-    # if(payload['pto'].contains("Saturday")):
-    #     jd
-    updateSatDB(payload['date'], payload['pool_a_level_1'], payload['pool_a_level_2'], payload['pool_b_level_1'], payload['pool_b_level_2'])
-    print("hakhrog men savelist")
-    return jsonify({'status': "OK"})
-
 @app.route('/getAll', methods=['GET'])
 def get_list():
     fetch_all_data()
@@ -233,6 +222,13 @@ def login():
     return jsonify({'status_': result_integer, 'isMod': isMod, 'pool': pool ,'level':level})
     # return jsonify({'status': "OK"})
 
+@app.route('/savesat', methods=['POST'])
+def post_sat():
+    print("dakhalt savesat")
+    payload = request.json
+    update_saturday(payload['date'], payload['pool_a_level_1'], payload['pool_a_level_2'], payload['pool_b_level_1'], payload['pool_b_level_2'])
+    print("hakhrog men savesat")
+    return jsonify({'status': "OK"})
 
 if __name__ == '__main__':
     print("Starting . . . ")

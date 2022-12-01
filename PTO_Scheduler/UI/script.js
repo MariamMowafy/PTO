@@ -362,17 +362,17 @@ function handleSaturdays(){
   //to my pool and level then continue and reduce the availability
 }
 
-function updateDatabase(){
+function update_saturday(){
 
 	(async () => {
-    console.log("dakhalt el async");
-		const rawResponse = await fetch('http://localhost:8080/updateSat', {
+    console.log("dakhalt el update_saturday");
+		const rawResponse = await fetch('http://localhost:8080/savesat', {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({"date":dateString, "pool_a_level_1":a1, "pool_a_level_2":a2,"pool_b_level_1":b1,"pool_b_level_2":b2})
+			body: JSON.stringify({"date":globalDateString, "pool_a_level_1":a1, "pool_a_level_2":a2, "pool_b_level_1":b1, "pool_b_level_2":b2})
 		});
 		const status_ = await rawResponse.json();
 		console.log(status_['status']);
@@ -386,7 +386,9 @@ function updateDatabase(){
 	})();
 }
 
+
 initButtons();
+update_saturday();
 load();
 // function redirecttohomepage(){
 //   window.open("./record.html","_self");

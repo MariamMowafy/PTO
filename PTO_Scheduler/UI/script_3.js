@@ -1,6 +1,9 @@
 
 var requests=[]
 var usernames = []
+
+
+
 function getData(){
 
 	//window.open("./thanks.html","_self");
