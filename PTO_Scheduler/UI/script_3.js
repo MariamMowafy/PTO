@@ -49,7 +49,6 @@ function getUsers(){
 	})();
 	
 }
-
 function viewUsers(data){
 	nameIndex=1;
 	ismodIndex=3;
@@ -60,9 +59,6 @@ function viewUsers(data){
 	}
 	//console.log(usernames);
 }
-
-
-
 function viewData(data,callback){
 	//console.log(data);
 	//console.log(data.length)
@@ -107,6 +103,8 @@ function viewData(data,callback){
 
 
 }
+
+//check to eclude old data
 
 function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 	//console.log("da men function el akheera " + id,ownerID,timestamp,ownerName,ptolist);
@@ -299,32 +297,40 @@ function visualize(data){
 		]
 	  });
 }
-// function submit(){
-// 	e.preventDefault();
-// 	let poolalevel1 = document.getElementById('poolalevel1').value;
-// 	localStorage.setItem('poolalevel1', poolalevel1);
-// 	console.log(localStorage.getItem('poolalevel1'));
-// 	// let passwd = document.getElementById('nt_password').value;
-// 	// console.log(passwd);
-	
-// 	console.log("Clicked!");
-// 	//options = ['Avaya','Saturdays','PTO','Public','Other']
-	
-// 	(async () => {
-// 		const rawResponse = await fetch('http://localhost:8080/login', {
-// 			method: 'POST',
-// 			headers: {
-// 				'Accept': 'application/json',
-// 				'Content-Type': 'application/json'
-// 			},
-// 			body: JSON.stringify({'name': name, 'password': passwd})
-// 		});
-// 		const status_ = await rawResponse.json();
-// 	})();
-// }
-// function initButtons() {
-// 	document.getElementById('submit').addEventListener('click', submit);
-// }
-//initButtons();
+//new
+function postRequirements(){
+	date= document.getElementById("date").value;
+	pal1= document.getElementById("poolalevel1").value;
+	pal2= document.getElementById("poolalevel2").value;
+	pbl1= document.getElementById("poolblevel1").value;
+	pbl2= document.getElementById("poolblevel2").value;
+	(async () => {
+		console.log("dakhalt el async");
+			const rawResponse = await fetch('http://localhost:8080/savesat', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				//payload['date'], payload['pool_a_level_1'], payload['pool_a_level_2'], payload['pool_b_level_1'], payload['pool_b_level_2']
+				body: JSON.stringify({"date":date, "pool_a_level_1":pal1, "pool_a_level_2":pal2, "pool_b_level_1":pbl1, "pool_b_level_2":pbl2})
+			});
+			const status_ = await rawResponse.json();
+			console.log(status_['status']);
+			
+			if (status_['status'] == "OK") {
+				console.log("Script FINE");
+			}else{
+				console.log("Script NOT OK");
+			}
+			console.log("hakhrog men el async");
+		})();
+}
+//new
+function initButtons() {
+	document.getElementById('submitbtn').addEventListener('click', postRequirements);
+}
+
+initButtons();
 getUsers();
 getData();

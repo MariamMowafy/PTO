@@ -1,3 +1,7 @@
+
+//exclude men ui el dashboard this month and display only next month
+//2 tables current month and next month
+
 let nav = 1;
 var x;
 var current_user = localStorage.getItem['current_user']
@@ -53,26 +57,26 @@ function openModal(date) {
   var dateObject = new Date(dateStr);
   var selectobject = document.getElementById("eventTitleInput"); 
   console.log(a1)
-  for (var i=0; i<selectobject.length; i++) {
-  if ((selectobject.options[i].value == 'Saturday' && dateObject.getDay() != 6 && flag==true ) || (selectobject.options[i].value == 'Saturday' && dateObject.getDay() == 6 && flag==true && a1<=0)){
-    console.log("gpwa"+a1)
-    selectobject.remove(i);
-    flag=false;
+//   for (var i=0; i<selectobject.length; i++) {
+//   if ((selectobject.options[i].value == 'Saturday' && dateObject.getDay() != 6 && flag==true ) || (selectobject.options[i].value == 'Saturday' && dateObject.getDay() == 6 && flag==true && a1<=0)){
+//     console.log("gpwa"+a1)
+//     selectobject.remove(i);
+//     flag=false;
  
-  }else if (flag==false){
-    console.log("vara " +a1)
-    const opt = document.createElement("option");
-    opt.value = "Saturday";
-    opt.text = "Saturday";
-    selectobject.add(opt, null);
-    flag=true;
-  } 
-  // if (selectobject.options[i].value == 'Saturday' && dateObject.getDay() == 6 ){
-  //   var option = document.createElement("option");
-  //   option.text = "Saturday";
-  //   selectobject.add(option);
-  // }
-}
+//   }else if (flag==false){
+//     console.log("vara " +a1)
+//     const opt = document.createElement("option");
+//     opt.value = "Saturday";
+//     opt.text = "Saturday";
+//     selectobject.add(opt, null);
+//     flag=true;
+//   } 
+//   if (selectobject.options[i].value == 'Saturday' && dateObject.getDay() == 6 ){
+//     var option = document.createElement("option");
+//     option.text = "Saturday";
+//     selectobject.add(option);
+//   }
+// }
 handleSaturdays();
 
   const eventForDay = events.find(e => e.date === clicked);
@@ -272,6 +276,7 @@ function send_to_server(){
 	events = [];
 	load();
   console.log('sending to server');
+  update_saturday();
   //window.open("./thanks.html","_self");
   
 	//window.open("./index.html","_self");
@@ -372,7 +377,7 @@ function update_saturday(){
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({"date":globalDateString, "pool_a_level_1":a1, "pool_a_level_2":a2, "pool_b_level_1":b1, "pool_b_level_2":b2})
+			body: JSON.stringify({ "pool_a_level_1":a1, "pool_a_level_2":a2, "pool_b_level_1":b1, "pool_b_level_2":b2,"date":globalDateString})
 		});
 		const status_ = await rawResponse.json();
 		console.log(status_['status']);
@@ -388,7 +393,6 @@ function update_saturday(){
 
 
 initButtons();
-update_saturday();
 load();
 // function redirecttohomepage(){
 //   window.open("./record.html","_self");

@@ -1,9 +1,25 @@
 import json
 import pymysql as pymysql
-from flask import Flask, jsonify, request
 import requests
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+
+#method to get pool and level of user by id //done
+#we get id from savelist
+#minus from correct pool and level
+#update db on chosen sat id
+def getUserById(id):
+    connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_2 = connection_2.cursor()
+    check_string_2 = "SELECT pool , level FROM userlogin where id = %s"
+    val=(1)
+    #val = (id)
+    print("Sending Request as follows: " + check_string_2)
+    myCursor_2.execute(check_string_2,val)
+    my_table_2 = myCursor_2.fetchall()
+    print(my_table_2)
+    connection_2.close()
 
 def sendToDB(ownerID, ownerName, ptolist):
     connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
@@ -132,8 +148,9 @@ def update_saturday(date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b
     connection_3 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_3 = connection_3.cursor()
     print("Ready To pass value to DB")
-    check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
-    val = (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2)
+    #check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
+    #check_string = "UPDATE `saturday_req` SET `pool_a_level_1`=8,`pool_a_level_2`=8,`pool_b_level_1`=8,`pool_b_level_2`=8 WHERE `ID` = 2"
+    val = ( pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2,date)
     print("Sending Request as follows: " + check_string)
     myCursor_3.execute(check_string, val)
     connection_3.commit()
@@ -173,7 +190,9 @@ def get_tasks():
 def post_list():
     print("dakhalt savelist")
     payload = request.json
-    print(payload['pto'])
+    print("****")
+    print(payload)
+    print("****")
     # if(payload['pto'].contains("Saturday")):
     #     jd
     sendToDB(payload['ownerID'], payload['name'], payload['pto'])
@@ -190,6 +209,10 @@ def get_list():
     fetch_all_data()
     return jsonify(fetch_all_data())
 
+@app.route('/getUserById', methods=['GET'])
+def get_users_by_id():
+    getUserById()
+    return jsonify(getUserById())
 
 @app.route('/getSaturdayRequirements', methods=['GET'])
 def get_sat():
