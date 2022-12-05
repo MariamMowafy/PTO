@@ -6,14 +6,14 @@ from flask_cors import CORS
 
 
 #method to get pool and level of user by id //done
-#we get id from savelist
+#we get id from savelist //done
 #minus from correct pool and level
 #update db on chosen sat id
 def getUserById(id):
     connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_2 = connection_2.cursor()
     check_string_2 = "SELECT pool , level FROM userlogin where id = %s"
-    val=(1)
+    val=(id)
     #val = (id)
     print("Sending Request as follows: " + check_string_2)
     myCursor_2.execute(check_string_2,val)
@@ -31,6 +31,7 @@ def sendToDB(ownerID, ownerName, ptolist):
     myCursor_l.execute(check_string, val)
     connection_l.commit()
     connection_l.close()
+    getUserById(ownerID)
     # my_table_l = myCursor_l.fetchall()
     # print(my_table_l)
     # if len(my_table_l) == 0:
@@ -209,10 +210,10 @@ def get_list():
     fetch_all_data()
     return jsonify(fetch_all_data())
 
-@app.route('/getUserById', methods=['GET'])
-def get_users_by_id():
-    getUserById()
-    return jsonify(getUserById())
+# @app.route('/getUserById', methods=['GET'])
+# def get_users_by_id():
+#     getUserById()
+#     return jsonify(getUserById())
 
 @app.route('/getSaturdayRequirements', methods=['GET'])
 def get_sat():
