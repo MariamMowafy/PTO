@@ -19,13 +19,27 @@ from flask_cors import CORS
 # connection_3.close()
 
 
-connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
-myCursor_2 = connection_2.cursor()
-check_string_2 = "SELECT pool , level FROM userlogin where id = %s"
-val = (1)
-print("Sending Request as follows: " + check_string_2)
-myCursor_2.execute(check_string_2,val)
-my_table_2 = myCursor_2.fetchall()
-print(my_table_2)
-connection_2.close()
+# connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+# myCursor_2 = connection_2.cursor()
+# check_string_2 = "SELECT pool , level FROM userlogin where id = %s"
+# val = (1)
+# print("Sending Request as follows: " + check_string_2)
+# myCursor_2.execute(check_string_2,val)
+# my_table_2 = myCursor_2.fetchall()
+# print(my_table_2)
+# connection_2.close()
 
+
+def getSatudayByDate(date):
+    connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_2 = connection_2.cursor()
+    check_string_2 = "SELECT * FROM saturday_req where date = %s"
+    val=(date)
+    print("Sending Request as follows: " + check_string_2)
+    myCursor_2.execute(check_string_2,val)
+    my_table_2 = myCursor_2.fetchall()
+    print(my_table_2)
+    connection_2.close()
+    return my_table_2
+
+getSatudayByDate("7/1/2023")

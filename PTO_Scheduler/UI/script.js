@@ -5,10 +5,20 @@
 let nav = 1;
 var x;
 var current_user = localStorage.getItem['current_user']
-pool =localStorage.getItem('current_user')[4]
-level =localStorage.getItem('current_user')[6]
-console.log(pool) 
-console.log(level) 
+currentUserPool =localStorage.getItem('current_user')[4]
+currentUserLevel =localStorage.getItem('current_user')[6]
+if(currentUserPool==0 && currentUserLevel==0){
+  currentUserTitle= "Pool A - L1";
+}
+else if(currentUserPool==0 && currentUserLevel==1){
+  currentUserTitle= "Pool A - L2";
+}
+else if(currentUserPool==1 && currentUserLevel==0){
+  currentUserTitle= "Pool B - L1";
+}
+else if(currentUserPool==1 && currentUserLevel==1){
+  currentUserTitle= "Pool B - L2";
+}
 console.log(localStorage.getItem('user')) 
 saturdayCount=0;
 saturdayDates=[];
@@ -32,13 +42,11 @@ satFlag=true;
 //this should be customized later or keep as default
 saturdayRequestedDepartments=['pool A - L1','pool B - L1','pool A - L2', 'pool B - L2','pool B - L1'];
 //this should be fetched on login from database
-currentUserPool = 0;
-currentUserLevel = 1;
-currentUserTitle= "pool A - L1";
-// poolalevel1=0;
-// poolalevel2=0;
-// poolblevel2=0;
-// poolblevel2=0;
+
+var poolalevel1=0;
+var poolalevel2=0;
+var poolblevel2=0;
+var poolblevel2=0;
 var satindex;
 var a1=0;
 var a2=0;
@@ -53,11 +61,58 @@ function openModal(date) {
   clicked = date;
   dateStr = clicked;
   globalDateString = dateStr;
-  handleSaturdays();
-  var dateObject = new Date(dateStr);
+  //handleSaturdays();
+  var datestring = clicked.split("/");
+  var dd = datestring[0];
+  var mm = datestring[1];
+  var yyyy = datestring[2];
+  datestring = mm+"/"+dd+"/"+yyyy
+  invertedDate = dd+"/"+mm+"/"+yyyy
+  var dateObject = new Date(datestring);
+  var invertedDateObject = new Date(invertedDate);
   var selectobject = document.getElementById("eventTitleInput"); 
-  console.log(a1)
+  var checker;
+  console.log("********************")
+  console.log(currentUserTitle)
+  console.log(poolalevel1)
+  console.log("********************")
+  if(currentUserTitle == 'Pool A - L1'){
+    checker = poolalevel1
+  }
+  else if(currentUserTitle == 'Pool A - L2'){
+    checker = poolalevel2
+  }
+  else if(currentUserTitle == 'Pool B - L1'){
+    checker = poolblevel1
+  }
+  else if(currentUserTitle == 'Pool B - L2'){
+    checker = poolblevel2
+  }
+  
+  console.log("Checker: "+checker)
+  console.log(invertedDateObject)
+for (var i=0; i<selectobject.length; i++) {
+  if( invertedDateObject.getDay() === 6 && flag==false && checker>0){
+      console.log(true)
+      const opt = document.createElement("option");
+      opt.value = "Saturday";
+      opt.text = "Saturday";
+      selectobject.add(opt, null);
+      flag=true;
+  }
+  else if(invertedDateObject.getDay() != 6 &&flag==true && selectobject.options[i].value == 'Saturday'){
+      console.log(false)
+      selectobject.remove(i);
+      flag=false;
+  }
+  else if ( invertedDateObject.getDay() === 6 && flag == true && checker<=0 && selectobject.options[i].value == 'Saturday') {
+    console.log(false)
+    selectobject.remove(i);
+    flag=false;
+  }
+}
 //   for (var i=0; i<selectobject.length; i++) {
+
 //   if ((selectobject.options[i].value == 'Saturday' && dateObject.getDay() != 6 && flag==true ) || (selectobject.options[i].value == 'Saturday' && dateObject.getDay() == 6 && flag==true && a1<=0)){
 //     console.log("gpwa"+a1)
 //     selectobject.remove(i);
@@ -77,7 +132,7 @@ function openModal(date) {
 //     selectobject.add(option);
 //   }
 // }
-handleSaturdays();
+//handleSaturdays();
 
   const eventForDay = events.find(e => e.date === clicked);
 
@@ -188,7 +243,8 @@ function saveEvent() {
         executeEvent();
       }
       else{
-        alert('This Saturday is taken, please choose another day')
+        //alert('This Saturday is taken, please choose another day')
+        executeEvent();
       }
     }
    
@@ -276,7 +332,7 @@ function send_to_server(){
 	events = [];
 	load();
   console.log('sending to server');
-  update_saturday();
+  //update_saturday();
   //window.open("./thanks.html","_self");
   
 	//window.open("./index.html","_self");
@@ -326,70 +382,80 @@ function getSaturdayReq(dayString){
 			},
 		});
 		const sat = await rawResponse.json();
+    var requirement;
     for(i=0;i<sat.length;i++){
-      saturdaysFetched.push(sat[i])
+      console.log("Sat [i][1]: "+sat[i][1])
+      console.log("dayString: "+dayString)
+      if(sat[i][1]==dayString){
+        requirement = sat[i];
+        break;
+      }
+      else{
+        requirement = 0
+      }
     }
-    //console.log(saturdaysFetched);
-		requirement = sat[0];
-    poolalevel1=requirement[1];
-    poolalevel2=requirement[2];
-    poolblevel1=requirement[3];
-    poolblevel2=requirement[4];
+		// requirement = sat[0];
+    console.log(requirement)
+    poolalevel1=requirement[2];
+    poolalevel2=requirement[3];
+    poolblevel1=requirement[4];
+    poolblevel2=requirement[5];
     satData=sat
     openModal(dayString);
 	})();
+
   console.log("khalast fetching saturday")
   
 }
 
-function handleSaturdays(){
-  var datestring = globalDateString.split("/");
-  var mm = datestring[0];
-  var dd = datestring[1];
-  var yyyy = datestring[2];
-  var newDateFormat = dd+"/"+mm+"/"+yyyy
-  console.log(newDateFormat)
+// function handleSaturdays(){
+//   var datestring = globalDateString.split("/");
+//   var mm = datestring[0];
+//   var dd = datestring[1];
+//   var yyyy = datestring[2];
+//   var newDateFormat = dd+"/"+mm+"/"+yyyy
+//   console.log(newDateFormat)
 
-  var exist = false;
+//   var exist = false;
 
-  for(i=0;i<satData.length;i++){
-    if(satData[i][1]==newDateFormat){
-      exist=true
-      satindex=i;
-      a1=satData[i][2];
-      a2=satData[i][3];
-      b1=satData[i][4];
-      b2=satData[i][5];
-    }
-  }
-  console.log(satFlag)
-  //if chosen one is saturday, check the pool and the level, if equal
-  //to my pool and level then continue and reduce the availability
-}
+//   for(i=0;i<satData.length;i++){
+//     if(satData[i][1]==newDateFormat){
+//       exist=true
+//       satindex=i;
+//       a1=satData[i][2];
+//       a2=satData[i][3];
+//       b1=satData[i][4];
+//       b2=satData[i][5];
+//     }
+//   }
+//   console.log(satFlag)
+//   //if chosen one is saturday, check the pool and the level, if equal
+//   //to my pool and level then continue and reduce the availability
+// }
 
-function update_saturday(){
+// function update_saturday(){
 
-	(async () => {
-    console.log("dakhalt el update_saturday");
-		const rawResponse = await fetch('http://localhost:8080/savesat', {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ "pool_a_level_1":a1, "pool_a_level_2":a2, "pool_b_level_1":b1, "pool_b_level_2":b2,"date":globalDateString})
-		});
-		const status_ = await rawResponse.json();
-		console.log(status_['status']);
+// 	(async () => {
+//     console.log("dakhalt el update_saturday");
+// 		const rawResponse = await fetch('http://localhost:8080/savesat', {
+// 			method: 'POST',
+// 			headers: {
+// 				'Accept': 'application/json',
+// 				'Content-Type': 'application/json'
+// 			},
+// 			body: JSON.stringify({ "pool_a_level_1":a1, "pool_a_level_2":a2, "pool_b_level_1":b1, "pool_b_level_2":b2,"date":globalDateString})
+// 		});
+// 		const status_ = await rawResponse.json();
+// 		console.log(status_['status']);
 		
-		if (status_['status'] == "OK") {
-			console.log("Script FINE");
-		}else{
-			console.log("Script NOT OK");
-		}
-		console.log("hakhrog men el async");
-	})();
-}
+// 		if (status_['status'] == "OK") {
+// 			console.log("Script FINE");
+// 		}else{
+// 			console.log("Script NOT OK");
+// 		}
+// 		console.log("hakhrog men el async");
+// 	})();
+// }
 
 
 initButtons();

@@ -140,7 +140,7 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 			for(j=0;j<temp.length;j++){
 	
 			for(z=0;z<users.length;z++){	
-				if(users[z]['name']==temp[j]['requester']&& temp[j]['title']=='Saturday'){
+				if(users[z]['name']==temp[j]['requester']&& temp[j]['title']=='Saturday' && tablebody_2!=null){
 
 						var cell0 = row.insertCell(0);
 						var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -185,7 +185,7 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 					}
 					
 					
-			else if(users[z]['name']==temp[j]['requester']&& temp[j]['title']!='Saturday'){
+			else if(users[z]['name']==temp[j]['requester']&& temp[j]['title']!='Saturday'&& tablebody!=null){
 					var cell3 = row_2.insertCell(0);
 					var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 					var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -327,10 +327,10 @@ function postRequirements(){
 		})();
 }
 //new
-function initButtons() {
-	document.getElementById('submitbtn').addEventListener('click', postRequirements);
-}
+// function initButtons() {
+// 	document.getElementById('submitbtn').addEventListener('click', postRequirements);
+// }
 
-initButtons();
+// initButtons();
 getUsers();
 getData();

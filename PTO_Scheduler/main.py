@@ -3,12 +3,24 @@ import pymysql as pymysql
 import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
+import re
 
 #method to get pool and level of user by id //done
 #we get id from savelist //done
 #minus from correct pool and level
 #update db on chosen sat id
+def getSatudayByDate(date):
+    connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_2 = connection_2.cursor()
+    check_string_2 = "SELECT * FROM saturday_req where date = %s"
+    val=(date)
+    print("Sending Request as follows: " + check_string_2)
+    myCursor_2.execute(check_string_2,val)
+    my_table_2 = myCursor_2.fetchall()
+    print(my_table_2)
+    connection_2.close()
+    return my_table_2
+
 def getUserById(id):
     connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_2 = connection_2.cursor()
@@ -19,50 +31,60 @@ def getUserById(id):
     myCursor_2.execute(check_string_2,val)
     my_table_2 = myCursor_2.fetchall()
     print(my_table_2)
+    return(my_table_2)
     connection_2.close()
+
+def updateRequirements(a1,a2,b1,b2,date):
+    connection_3 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_3 = connection_3.cursor()
+    print("Ready To pass value to DB")
+    #check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
+    check_string = "UPDATE `saturday_req` SET `pool_a_level_1`= %s,`pool_a_level_2`= %s,`pool_b_level_1`= %s,`pool_b_level_2`= %s WHERE `date` = %s"
+    #check_string = "SELECT * FROM pto_record WHERE timestamp BETWEEN '12/01/2022' AND '12/07/2022'"
+    val = (a1,a2,b1,b2,date)
+    print("Sending Request as follows: " + check_string)
+    myCursor_3.execute(check_string,val)
+    my_table_l = myCursor_3.fetchall()
+    print(my_table_l)
+    connection_3.commit()
+    connection_3.close()
 
 def sendToDB(ownerID, ownerName, ptolist):
     connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_l = connection_l.cursor()
     print("Ready To pass value to DB")
-    check_string = "INSERT INTO pto_record (ownerID, ownerName, ptolist) VALUES (%s, %s, %s)"
+    check_string_1 = "INSERT INTO pto_record (ownerID, ownerName, ptolist) VALUES (%s, %s, %s)"
     val = (ownerID, ownerName, json.dumps(ptolist))
-    print("Sending Request as follows: " + check_string)
-    myCursor_l.execute(check_string, val)
+    print("Sending Request as follows: " + check_string_1)
+    myCursor_l.execute(check_string_1, val)
     connection_l.commit()
     connection_l.close()
-    getUserById(ownerID)
-    # my_table_l = myCursor_l.fetchall()
-    # print(my_table_l)
-    # if len(my_table_l) == 0:
-    #     print("No Record for this Email Please Register")
-    #     return 0
-    # else:
-    #     real_pass = my_table_l[0][4]
-    #     print("Real Pass is: " + real_pass)
-    #     print("Entered Pass is: " + password)
-    #     if real_pass == password:
-    #         print("LOGIN IS SUCCESSFUL!")
-    #         # global user
-    #         # global user_name
-    #         # global nt_name
-    #         # global isMod
-    #         # nt_name = my_table[0][3]
-    #         # user_name = my_table[0][1]
-    #         # isMod = my_table[0][5]
-    #         # user = User(ident=my_table[0][0], n_t=my_table[0][3], first=my_table[0][1],
-    #         #             last=my_table[0][2], is_mod=my_table[0][5])
-    #         # print(user)
-    #         # login_window.withdraw()
-    #         # need to send ID and name
-    #         user_id = my_table_l[0][0]
-    #         connection_l.commit()
-    #         connection_l.close()
-    #         return user_id
-    #     else:
-    #         print("CREDENTIALS ARE WRONG!!!")
-    #         return 500
-
+    for record in ptolist:
+        if record['title']=="Saturday":
+            x=re.split('(|, |)|,',str(getUserById(ownerID)))
+            #need to check on the date to fetch saturday requirements from tht date
+            req = getSatudayByDate(str(record['date']))
+            pool=x[6]
+            level=x[12]
+            if pool=='0':
+                if level=='0':
+                    if req[0][2]>0:
+                        updateRequirements(req[0][2]-1,req[0][3],req[0][4],req[0][5],str(record['date']))
+                        #print(req[2])
+                else:
+                    if req[0][3]>0:
+                        updateRequirements(req[0][2],req[0][3]-1,req[0][4],req[0][5],str(record['date']))
+                        # print(req[3])
+            elif level =='0':
+                if req[0][4]>0:
+                    updateRequirements(req[0][2],req[0][3],req[0][4]-1,req[0][5],str(record['date']))
+                    # print(req[4])
+            else:
+                if req[0][5]>0:
+                    updateRequirements(req[0][2],req[0][3],req[0][4],req[0][5]-1,str(record['date']))
+                    # print(req[5])
+        else:
+            print("LA2AAAA")
 
 def login_db(user, password):
     pool = 0
