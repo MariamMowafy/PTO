@@ -140,7 +140,7 @@ def fetch_all_data():
     print("Sending Request as follows: " + check_string)
     myCursor_l.execute(check_string)
     myTable = myCursor_l.fetchall()
-    print(myTable)
+    # print(myTable)
     connection_l.commit()
     connection_l.close()
     return myTable
@@ -167,15 +167,15 @@ def fetch_users():
     connection_2.close()
     return my_table_2
 
-def update_saturday(date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2):
+def update_saturday(pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2,date):
     connection_3 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_3 = connection_3.cursor()
-    print("Ready To pass value to DB")
-    #check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
-    #check_string = "UPDATE `saturday_req` SET `pool_a_level_1`=8,`pool_a_level_2`=8,`pool_b_level_1`=8,`pool_b_level_2`=8 WHERE `ID` = 2"
-    val = ( pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2,date)
+    print("*******************************Ready To pass value to DB")
+    # check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
+    check_string = "UPDATE `saturday_req` SET `pool_a_level_1`=100,`pool_a_level_2`=100,`pool_b_level_1`=100,`pool_b_level_2`=100 WHERE `date`=%s"
+    val = (pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2,date)
     print("Sending Request as follows: " + check_string)
-    myCursor_3.execute(check_string, val)
+    myCursor_3.execute(check_string,val)
     connection_3.commit()
     connection_3.close()
 
@@ -272,7 +272,7 @@ def login():
 def post_sat():
     print("dakhalt savesat")
     payload = request.json
-    update_saturday(payload['date'], payload['pool_a_level_1'], payload['pool_a_level_2'], payload['pool_b_level_1'], payload['pool_b_level_2'])
+    update_saturday(payload['pool_a_level_1'], payload['pool_a_level_2'], payload['pool_b_level_1'], payload['pool_b_level_2'],payload['date'])
     print("hakhrog men savesat")
     return jsonify({'status': "OK"})
 
