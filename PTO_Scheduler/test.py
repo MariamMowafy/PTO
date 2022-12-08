@@ -30,16 +30,41 @@ from flask_cors import CORS
 # connection_2.close()
 
 
-def getSatudayByDate(date):
-    connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
-    myCursor_2 = connection_2.cursor()
-    check_string_2 = "SELECT * FROM saturday_req where date = %s"
-    val=(date)
-    print("Sending Request as follows: " + check_string_2)
-    myCursor_2.execute(check_string_2,val)
-    my_table_2 = myCursor_2.fetchall()
-    print(my_table_2)
-    connection_2.close()
-    return my_table_2
+# def getSatudayByDate(date):
+#     connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+#     myCursor_2 = connection_2.cursor()
+#     check_string_2 = "SELECT * FROM saturday_req where date = %s"
+#     val=(date)
+#     print("Sending Request as follows: " + check_string_2)
+#     myCursor_2.execute(check_string_2,val)
+#     my_table_2 = myCursor_2.fetchall()
+#     print(my_table_2)
+#     connection_2.close()
+#     return my_table_2
 
-getSatudayByDate("7/1/2023")
+# getSatudayByDate("7/1/2023")
+
+
+# connection_3 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+# myCursor_3 = connection_3.cursor()
+# print("Ready To pass value to DB")
+# #check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
+# #check_string = "UPDATE `saturday_req` SET `pool_a_level_1`=%s,`pool_a_level_2`=%s,`pool_b_level_1`=%s,`pool_b_level_2`=%s WHERE `date` = %s"
+# check_string = "UPDATE `saturday_req` SET `pool_a_level_1`=%s,`pool_a_level_2`=%s,`pool_b_level_1`=%s,`pool_b_level_2`=%s WHERE `date` = %s"
+# val = ( 8, 8, 8, 8,"1/14/2023")
+# print("Sending Request as follows: " + check_string)
+# myCursor_3.execute(check_string, val)
+# connection_3.commit()
+# connection_3.close()
+
+
+connection_3 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+myCursor_3 = connection_3.cursor()
+print("Ready To pass value to DB")
+#check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
+check_string = "UPDATE `saturday_req` SET `pool_a_level_1`=10,`pool_a_level_2`=10,`pool_b_level_1`=10,`pool_b_level_2`=10 WHERE `date`=%s"
+val = ("1/28/2023")
+print("Sending Request as follows: " + check_string)
+myCursor_3.execute(check_string,val)
+connection_3.commit()
+connection_3.close()
