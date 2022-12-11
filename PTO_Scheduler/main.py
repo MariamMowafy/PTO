@@ -170,11 +170,11 @@ def fetch_users():
 def update_saturday(pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2,date):
     connection_3 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_3 = connection_3.cursor()
-    print("*******************************Ready To pass value to DB")
+    print("########################### Ready To pass value to DB ###########################")
     # check_string = "INSERT INTO saturday_req (date, pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2) VALUES (%s, %s, %s, %s, %s)"
-    check_string = "UPDATE `saturday_req` SET `pool_a_level_1`=100,`pool_a_level_2`=100,`pool_b_level_1`=100,`pool_b_level_2`=100 WHERE `date`=%s"
+    check_string = "UPDATE `saturday_req` SET `pool_a_level_1`=%s,`pool_a_level_2`=%s,`pool_b_level_1`=%s,`pool_b_level_2`=%s WHERE `date`=%s"
     val = (pool_a_level_1, pool_a_level_2, pool_b_level_1, pool_b_level_2,date)
-    print("Sending Request as follows: " + check_string)
+    print("########################### Sending Request as follows: " + check_string)
     myCursor_3.execute(check_string,val)
     connection_3.commit()
     connection_3.close()
@@ -242,6 +242,14 @@ def get_sat():
     fetch_saturday()
     return jsonify(fetch_saturday())
 
+@app.route('/savesat', methods=['POST'])
+def post_sat():
+    print("########################### dakhalt savesat ###########################")
+    payload = request.json
+    update_saturday(payload['pool_a_level_1'], payload['pool_a_level_2'], payload['pool_b_level_1'], payload['pool_b_level_2'],payload['date'])
+    print("########################### hakhrog men savesat ###########################")
+    return jsonify({'status': "OK"})
+    
 @app.route('/getUsers', methods=['GET'])
 def get_users():
     fetch_users()
@@ -267,14 +275,6 @@ def login():
         result_integer = "WRONG CREDS"
     return jsonify({'status_': result_integer, 'isMod': isMod, 'pool': pool ,'level':level})
     # return jsonify({'status': "OK"})
-
-@app.route('/savesat', methods=['POST'])
-def post_sat():
-    print("dakhalt savesat")
-    payload = request.json
-    update_saturday(payload['pool_a_level_1'], payload['pool_a_level_2'], payload['pool_b_level_1'], payload['pool_b_level_2'],payload['date'])
-    print("hakhrog men savesat")
-    return jsonify({'status': "OK"})
 
 if __name__ == '__main__':
     print("Starting . . . ")

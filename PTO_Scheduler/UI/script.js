@@ -74,7 +74,7 @@ function openModal(date) {
   var checker;
   console.log("********************")
   console.log(currentUserTitle)
-  console.log(poolalevel1)
+  //console.log(poolalevel1)
   console.log("********************")
   if(currentUserTitle == 'Pool A - L1'){
     checker = poolalevel1

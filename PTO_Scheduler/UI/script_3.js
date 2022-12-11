@@ -474,7 +474,7 @@ function getSaturdayReq(){
 }
 function info(sat){
 	tablebody = document.getElementById('tbody_6');
-	for(i=0;i<sat.length;i++){
+	for(i=sat.length-1;i>=0;i--){
 		var row = tablebody.insertRow(0);
 		var cell1 = row.insertCell(0);
 		cell1.innerHTML = sat[i][5];
@@ -492,6 +492,11 @@ function info(sat){
 
 function submit(){
 				console.log("YAY");
+				dateVar = document.getElementById("sat_req").value;
+				a1=document.getElementById("poolalevel1").value;
+				a2=document.getElementById("poolalevel2").value;
+				b1=document.getElementById("poolblevel1").value;
+				b2=document.getElementById("poolblevel2").value;
 			(async () => {
 				console.log("dakhalt el async");
 					const rawResponse = await fetch('http://localhost:8080/savesat', {
@@ -500,18 +505,10 @@ function submit(){
 							'Accept': 'application/json',
 							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify({"date":"1/7/2023", "pool_a_level_1":100,"pool_a_level_2":100,"pool_b_level_1":100,"pool_b_level_2":100})
+						body: JSON.stringify({"date":dateVar, "pool_a_level_1":a1,"pool_a_level_2":a2,"pool_b_level_1":b1,"pool_b_level_2":b2})
 					});
-					const status_ = await rawResponse.json();
-					console.log(status_['status']);
-					
-					if (status_['status'] == "OK") {
-						console.log("Script FINE");
-					}else{
-						console.log("Script NOT OK");
-					}
-					console.log("hakhrog men el async");
 				})();
+				window.alert("The requirements have been updated successfully!")
 }
 
 	// 	document.getElementById('form').addEventListener('submit', function(){
