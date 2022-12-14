@@ -88,7 +88,7 @@ for(i=0;i<listPTO.length;i++){
           console.log(false)
           selectobject.remove(j);
           flagPTO=false;
-          console.log("FEL IF")
+          console.log
           getPTOReq();
     }
   } 
@@ -100,19 +100,17 @@ for(i=0;i<listPTO.length;i++){
         opt.text = "PTO";
         selectobject.add(opt, null);
         flagPTO=true;
-        console.log("FEL else 1")
         getPTOReq();
       }
     
-  } else if(listPTO[i][0]!=invertedDate&&flagPTO==false){
-    console.log(true)
-        const opt = document.createElement("option");
-        opt.value = "PTO";
-        opt.text = "PTO";
-        selectobject.add(opt, null);
-        flagPTO=true;
-        console.log("FEL else 2")
-        getPTOReq();
+  } else if(listPTO[i][0]==invertedDate && i==listPTO.length-1 && flag==false){
+      console.log(true)
+      const opt = document.createElement("option");
+      opt.value = "PTO";
+      opt.text = "PTO";
+      selectobject.add(opt, null);
+      flagPTO=true;
+      getPTOReq();
   }
   }
   console.log("********************")
