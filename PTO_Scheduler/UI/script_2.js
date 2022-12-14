@@ -31,7 +31,7 @@ function sign_in(e) {
 		console.log(status_['level']);
 		current_user = [status_['status_'], status_['isMod'],status_['pool'],status_['level']];
 		localStorage.setItem('current_user', current_user);
-		if (status_['status_'] != 0 && status_['status_'] != 500 && status_['isMod'] ==0) {
+		if (status_['status_'] != 0 && status_['status_']!="TABLE IS EMPTY"&& status_['status_']!="WRONG CREDS" && status_['status_'] != 500 && status_['isMod'] ==0) {
 			console.log("FINE Not MOD");
 			openCalenderWindow();
 		}else{
@@ -39,6 +39,7 @@ function sign_in(e) {
 				console.log("FINE MOD");
 				openModWindow();
 			}else{
+				alert("Please check your username or password")
 				console.log("NOT OK");
 			}
 		}
@@ -96,7 +97,7 @@ function openCalenderWindow(){
 }
 
 function openModWindow(){
-	window.open("./show.html","_self");
+	window.open("homepage.html","_self");
 }
 
 function initButtons() {

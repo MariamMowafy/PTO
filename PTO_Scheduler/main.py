@@ -156,6 +156,18 @@ def fetch_saturday():
     connection_2.close()
     return my_table_2
 
+def fetch_counts():
+    connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_2 = connection_2.cursor()
+    check_string_2 = "SELECT SUM(ptolist LIKE '%\"date\": \"1/7/2023\", \"title\": \"Saturday\"%') AS \"1/7/2023\", SUM(ptolist LIKE '%\"date\": \"1/14/2023\", \"title\": \"Saturday\"%') AS \"1/14/2023\", SUM(ptolist LIKE '%\"date\": \"1/21/2023\", \"title\": \"Saturday\"%') AS \"1/14/2023\", SUM(ptolist LIKE '%\"date\": \"1/28/2023\", \"title\": \"Saturday\"%') AS \"1/28/2023\" FROM pto_record;"
+    # val = (date)
+    print("Sending Request as follows: " + check_string_2)
+    myCursor_2.execute(check_string_2)
+    my_table_2 = myCursor_2.fetchall()
+    print(my_table_2)
+    connection_2.close()
+    return my_table_2
+
 def fetch_users():
     connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_2 = connection_2.cursor()
@@ -232,10 +244,10 @@ def get_list():
     fetch_all_data()
     return jsonify(fetch_all_data())
 
-# @app.route('/getUserById', methods=['GET'])
-# def get_users_by_id():
-#     getUserById()
-#     return jsonify(getUserById())
+@app.route('/getCount', methods=['GET'])
+def get_counts():
+    fetch_counts()
+    return jsonify(fetch_counts())
 
 @app.route('/getSaturdayRequirements', methods=['GET'])
 def get_sat():

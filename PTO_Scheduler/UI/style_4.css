@@ -8171,7 +8171,7 @@
     padding-bottom: 0; }
   
   .heading-section {
-    font-size: 28px;
+    font-size: 30px;
     color: #000; }
   
   .img {
@@ -8242,4 +8242,38 @@
 .topnav a.active {
   background-color: #e35869;
   color: white;
+}
+/*  */
+.botnav {
+  /* background-color: #abdde5; */
+  color: black;
+  overflow: hidden;
+   position: absolute;
+   width: 100%;
+   text-align: center;
+}
+
+/* Style the links inside the navigation bar */
+.botnav a {
+  /* float: left; */
+  /* color: #f2f2f2;  */
+  text-align: center;
+  padding: 14px 18px;
+  text-decoration: none;
+  font-size: 18px;
+  color: gray;
+  margin: auto;
+  display: inline-block;
+}
+
+/* Change the color of links on hover */
+.botnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Add a color to the active/current link */
+.botnav a.active {
+  /* background-color: #ddd; */
+  color: black;
 }

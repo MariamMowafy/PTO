@@ -1,8 +1,12 @@
+//pto = 8
+//public = 16
+
 
 var requests=[]
 var usernames = []
-
-
+let counts;
+var req=[];
+var LOCALVARIABLE = []
 
 function getData(){
 
@@ -203,6 +207,11 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 							//console.log(splittingPTO[i].length)
 							row = tablebody.insertRow(0);
 							requests.push({date: now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear(),type:temp[j]['title'],name:temp[j]['requester'],pool:y,level:x,skill:users[z]['skill']})
+							//viz({date: now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear(),type:temp[j]['title'],name:temp[j]['requester'],pool:y,level:x,skill:users[z]['skill']});
+							// if(!LOCALVARIABLE.includes(now)){
+							// 	LOCALVARIABLE.push(now)
+							// }
+							sortTable("tbody");
 						} else{
 							var cell0 = row_1.insertCell(0);
 							var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -244,7 +253,8 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 							//console.log(splittingPTO[i].length)
 							row_1 = tablebody_1.insertRow(0);
 							requests.push({date: now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear(),type:temp[j]['title'],name:temp[j]['requester'],pool:y,level:x,skill:users[z]['skill']})
-						
+							//viz({date: now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear(),type:temp[j]['title'],name:temp[j]['requester'],pool:y,level:x,skill:users[z]['skill']});
+							sortTable("tbody_1");
 						}
 					}	
 			else if(users[z]['name']==temp[j]['requester']&& temp[j]['title']!='Saturday'&& tablebody_2!=null){
@@ -301,7 +311,7 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 						//console.log(splittingPTO[i].length)
 						row_2 = tablebody_2.insertRow(0);
 					//requests.push({date: now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear(),type:temp[j]['title'],name:temp[j]['requester'],pool:null,level:null})
-			
+					sortTable("tbody_2");
 		} else{
 			var cell3 = row_3.insertCell(0);
 			var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -343,74 +353,16 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 				cell8.innerHTML = users[z]['skill'];
 				//console.log(splittingPTO[i].length)
 				row_3 = tablebody_3.insertRow(0);
-			
+				sortTable("tbody_3");
 		}
 	}
 	}
 	}
 		}
 	}
+	prepareDataForVisualization();
 	console.log(requests)
 	//visualize(console.log(requests));
-}
-function visualize(data){
-// // 	point=data;
-// 	var chart = JSC.chart('chartDiv', {
-// 		debug: true,
-// 		type: 'column',
-// 		//title_label_text: 'Saturday capacity',
-// 		legend_visible: false,
-// 		yAxis_defaultTick_label_text: '%value%',
-// 		yAxis: {
-// 			scale:{
-// 				range: [0,100]
-// 			}
-// 		},
-// 		xAxis: {
-// 		  defaultTick: {
-// 			placement: 'inside',
-// 			label: {
-// 			  color: 'white',
-// 			  style: { fontWeight: 'bold', fontSize: 16 }
-// 			}
-// 		  }
-// 		},
-// 		series: [
-// 		  {
-// 			defaultPoint: {
-// 			  tooltip: '<b>%yValue%</b> of the capacity is taken',
-// 			  marker: { visible: true, size: 40, fill: 'azure' },
-// 			  label_text: '%value%'
-// 			},
-// 			name: 'Users with access',
-// 			points: 
-// 			//point
-// 			[
-
-// 			  {
-// 				name: 'Saturday 1',
-// 				y: Math.round(4/6 *100),
-// 				marker_type: '1'
-// 			  },
-// 			  {
-// 				name: 'Saturday 2',
-// 				y: Math.round(3/6 *100),
-// 				marker_type: '2'
-// 			  },
-// 			  {
-// 				name: 'Saturday 3',
-// 				y: Math.round(6/6 *100),
-// 				marker_type: '3'
-// 			  },
-// 			  {
-// 				name: 'Saturday 4',
-// 				y: Math.round(5/6 *100),
-// 				marker_type: '4'
-// 			  }
-// 			]
-// 		  }
-// 		]
-// 	  });
 }
 //new
 function postRequirements(){
@@ -535,9 +487,188 @@ function submit(){
 	// 			})();
 	// })
 
+function prepareDataForVisualization(){
+	var dates=[];
+	var counts={};
+		(async () => {
+			  const rawResponse = await fetch('http://localhost:8080/getSaturdayRequirements', {
+				  method: 'GET',
+				  headers: {
+					  'Accept': 'application/json',
+					  'Content-Type': 'application/json'
+				  },
+				  
+			  });
+			  const sat = await rawResponse.json();
+			  for(i=0;i<sat.length;i++){
+				x=sat[i][1]
+				dates.push(sat[i][1])
+				//counts.sat[i][1]=0;
+			  }
+			  for await (nums of dates){
+				counts[nums]=0;
+				console.log(counts)
+			  }
+			  countEntries(dates);
+			  //console.log(counts+"###########")
+
+		  })();
+	}
+function countEntries(data){
+	var counts;
+	(async () => {
+		const rawResponse = await fetch('http://localhost:8080/getCount', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			//body: JSON.stringify({"ownerID":1, "name":owner_, "pto":events})
+		});
+		const sat = await rawResponse.json();
+		counts=sat[0]
+		console.log(counts)
+		viz(data,counts)
+	})();
+
+	console.log("yay")
+}
+
+function viz(dates,counts){
+	console.log("####"+dates + "#######" + counts );
+	capacity=[];
+	var colors=[];
+	var dataArray=[];
+	console.log(dates);
+	(async () => {
+		const rawResponse = await fetch('http://localhost:8080/getSaturdayRequirements', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+		});
+		const sat = await rawResponse.json();
+		console.log(sat)
+		var count=0;
+		for await(num of sat){
+			capacity.push(sat[count][2]+sat[count][3]+sat[count][4]+sat[count][5]);
+			++count;
+			//console.log(capacity[count] + " eda");
+		}
+		console.log(capacity+" ++++++++")
+		count=0
+		for await (const num of capacity){
+			dataArray.push(counts[count]/capacity[count]*100)
+			++count
+		}
+
+		//dataArray = [counts[0]/capacity[0]*100,counts[1]/capacity[1]*100,counts[2]/capacity[2]*100,counts[3]/capacity[3]*100]
+		for await(num of capacity){
+			console.log(num)
+		}	
+
+		for await (const num of dataArray){
+			if(num>=80){
+				colors.push('#40826D')
+			} else if(num>=60){
+				colors.push('#FFD966')
+			} else if(num<60){
+				colors.push('#A40000')
+			}
+		}
+		console.log("colors: "+colors)
+		drawChart(dates,dataArray,colors);
+	})();
+	
+}
+function drawChart(dates,dataArray,colors){
+	new Chart(document.getElementById("bar-chart"), {
+		type: 'bar',
+		data: {
+		labels: dates,
+		datasets: [
+			{
+			label: "Saturdays capacity for this day",
+			backgroundColor: colors,
+			data: dataArray
+			}
+		]
+		},
+		options: {
+			legend: {
+       		display: false
+    		},
+			scales: {
+				
+				yAxes: [{
+				ticks: {
+				
+					min: 0,
+					stepSize: 25,
+					//max: 30,
+					callback: function(value){return value+ "%"}
+					},  
+					scaleLabel: {
+					display: true,
+					labelString: "Percentage"
+					}
+				}],
+				xAxes: [{
+						scaleLabel: {
+						display: true,
+						labelString: "Dates"
+						}
+					}]
+
+			},
+			// title: {
+			// 	display: true,
+			// 	text: 'Saturdays capacity for this month'
+			//   }
+		}
+	});
+}
 function initButtons() {
 	document.getElementById('updateBtn').addEventListener('click', submit);
 	}
+function sortTable(tableName) {
+	var table, rows, switching, i, x, y, shouldSwitch;
+	table = document.getElementById(tableName);
+	switching = true;
+	/* Make a loop that will continue until
+	no switching has been done: */
+	while (switching) {
+	// Start by saying: no switching is done:
+	switching = false;
+	rows = table.rows;
+	/* Loop through all table rows (except the
+	first, which contains table headers): */
+	for (i = 1; i < (rows.length - 1); i++) {
+	// Start by saying there should be no switching:
+	shouldSwitch = false;
+	/* Get the two elements you want to compare,
+	one from current row and one from the next: */
+	x = rows[i].getElementsByTagName("TD")[0];
+	y = rows[i + 1].getElementsByTagName("TD")[0];
+	// Check if the two rows should switch place:
+	x_new =  new Date(x.innerHTML)
+	y_new =  new Date(y.innerHTML)
+	if (x_new>y_new) {
+		// If so, mark as a switch and break the loop:
+		shouldSwitch = true;
+		break;
+	}
+	}
+	if (shouldSwitch) {
+	/* If a switch has been marked, make the switch
+	and mark that a switch has been done: */
+	rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+	switching = true;
+	}
+	}
+	console.log("LOCAL:: " +LOCALVARIABLE)
+}
 
 
 // initButtons();

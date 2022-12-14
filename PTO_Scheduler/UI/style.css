@@ -58,7 +58,7 @@ button {
   justify-content: space-between;
 }
 .day:hover {
-  background-color: #e8faed;
+  background-color: #d4f1fd79;
 }
 
 .day + #currentDay {

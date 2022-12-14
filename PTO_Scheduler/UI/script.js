@@ -332,8 +332,8 @@ function send_to_server(){
 	events = [];
 	load();
   console.log('sending to server');
-  //update_saturday();
-  //window.open("./thanks.html","_self");
+  update_saturday();
+
   
 	//window.open("./index.html","_self");
 	
