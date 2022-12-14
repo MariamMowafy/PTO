@@ -24,7 +24,7 @@ def insert_PTO(date,pto):
     connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_l = connection_l.cursor()
     print("Ready To pass value to DB")
-    check_string_1 = "INSERT INTO month (date, pto) VALUES (%s, %s)"
+    check_string_1 = "INSERT INTO month (date, pto,public) VALUES (%s, %s,8)"
     val = (date, pto)
     print("Sending Request as follows: " + check_string_1)
     myCursor_l.execute(check_string_1, val)

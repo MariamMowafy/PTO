@@ -88,6 +88,7 @@ for(i=0;i<listPTO.length;i++){
           console.log(false)
           selectobject.remove(j);
           flagPTO=false;
+          console.log("FEL IF")
           getPTOReq();
     }
   } 
@@ -99,6 +100,7 @@ for(i=0;i<listPTO.length;i++){
         opt.text = "PTO";
         selectobject.add(opt, null);
         flagPTO=true;
+        console.log("FEL else 1")
         getPTOReq();
       }
     
@@ -109,6 +111,7 @@ for(i=0;i<listPTO.length;i++){
         opt.text = "PTO";
         selectobject.add(opt, null);
         flagPTO=true;
+        console.log("FEL else 2")
         getPTOReq();
   }
   }
