@@ -131,6 +131,8 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 	tablebody_1 = document.getElementById('tbody_1');
 	tablebody_2 = document.getElementById('tbody_2');
 	tablebody_3 = document.getElementById('tbody_3');
+	tablebody_4 = document.getElementById('tbody_4');
+	tablebody_5 = document.getElementById('tbody_5');
 	console.log("********" + tablebody)
 	console.log("********" + tablebody_2)
 	for(i=0;i<splitted.length;i++){
@@ -146,8 +148,11 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 		var row_2 = tablebody_2.insertRow(0);
 		var row_3 = tablebody_3.insertRow(0);
 		}
+		if(tablebody_4!=null){
+		var row_4 = tablebody_4.insertRow(0);
+		var row_5 = tablebody_5.insertRow(0);
+		}
 
-		
 		for(i=0;i<ptolist.length;i++){
 			temp=JSON.parse(ptolist[i])
 			users = usernames
@@ -257,7 +262,106 @@ function splitPto(id,ownerID,timestamp,ownerName,ptolist){
 							sortTable("tbody_1");
 						}
 					}	
-			else if(users[z]['name']==temp[j]['requester']&& temp[j]['title']!='Saturday'&& tablebody_2!=null){
+					else if(users[z]['name']==temp[j]['requester']&& temp[j]['title']=='Avaya'&& tablebody_4!=null){
+						now = new Date(temp[j]['date']);
+						currentMonth = new Date();
+						currentMonth = currentMonth.getMonth();
+						if(currentMonth==11){
+							currentMonth=0
+						}
+						else{
+							currentMonth=currentMonth+1
+						}
+						console.log(now.getMonth() + "**********")
+						console.log(currentMonth + "*******")
+						if(now.getMonth()==currentMonth){
+							var cell3 = row_4.insertCell(0);
+							var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+							var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+							cell3.innerHTML = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+			
+						
+							// var cell4 = row_4.insertCell(1);
+							// cell4.innerHTML = temp[j]['title'];
+			
+							
+							var cell5 = row_4.insertCell(1);
+							cell5.innerHTML = temp[j]['requester'];
+							//console.log(splittingPTO[i].length)
+		
+							var cell6 = row_4.insertCell(2);
+								var y;
+									if(users[z]['pool']==0){
+										y='Pool A';
+										cell6.innerHTML = 'Pool A';
+									} else{
+										y='Pool B';
+										cell6.innerHTML = 'Pool B';
+									}
+		
+							var cell7 = row_4.insertCell(3);
+								var x;
+								if(users[z]['level']==0){
+									x='Level 1';
+									cell7.innerHTML = 'Level 1';
+								} else{
+									x='Level 1';
+									cell7.innerHTML = 'Level 2';
+								}
+								
+								var cell8 = row_4.insertCell(4);
+								//cell5.innerHTML = "To be determined";
+								//console.log(users);
+								cell8.innerHTML = users[z]['skill'];
+								//console.log(splittingPTO[i].length)
+								row_4 = tablebody_4.insertRow(0);
+							//requests.push({date: now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear(),type:temp[j]['title'],name:temp[j]['requester'],pool:null,level:null})
+							sortTable("tbody_4");
+				} else{
+					var cell3 = row_5.insertCell(0);
+					var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+					var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+					cell3.innerHTML = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+		
+				
+					// var cell4 = row_5.insertCell(1);
+					// cell4.innerHTML = temp[j]['title'];
+		
+					
+					var cell5 = row_5.insertCell(1);
+					cell5.innerHTML = temp[j]['requester'];
+					//console.log(splittingPTO[i].length)
+		
+					var cell6 = row_5.insertCell(2);
+						var y;
+							if(users[z]['pool']==0){
+								y='Pool A';
+								cell6.innerHTML = 'Pool A';
+							} else{
+								y='Pool B';
+								cell6.innerHTML = 'Pool B';
+							}
+		
+					var cell7 = row_5.insertCell(3);
+						var x;
+						if(users[z]['level']==0){
+							x='Level 1';
+							cell7.innerHTML = 'Level 1';
+						} else{
+							x='Level 1';
+							cell7.innerHTML = 'Level 2';
+						}
+						
+						var cell8 = row_5.insertCell(4);
+						//cell5.innerHTML = "To be determined";
+						//console.log(users);
+						cell8.innerHTML = users[z]['skill'];
+						//console.log(splittingPTO[i].length)
+						row_5 = tablebody_5.insertRow(0);
+						sortTable("tbody_5");
+				}
+			}
+			else if(users[z]['name']==temp[j]['requester']&& temp[j]['title']!='Saturday' && temp[j]['title']!='Avaya'&& tablebody_2!=null){
 				now = new Date(temp[j]['date']);
 				currentMonth = new Date();
 				currentMonth = currentMonth.getMonth();

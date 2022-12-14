@@ -9,10 +9,44 @@ import re
 #we get id from savelist //done
 #minus from correct pool and level
 #update db on chosen sat id
+def insert_PTO(date,pto):
+    connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_l = connection_l.cursor()
+    print("Ready To pass value to DB")
+    check_string_1 = "INSERT INTO month (date, pto) VALUES (%s, %s)"
+    val = (date, pto)
+    print("Sending Request as follows: " + check_string_1)
+    myCursor_l.execute(check_string_1, val)
+    connection_l.commit()
+    connection_l.close()
+
+def update_PTO(date,record):
+    connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_l = connection_l.cursor()
+    print("Ready To pass value to DB")
+    check_string_1 = "UPDATE `month` SET `pto`= %s WHERE `date` = %s"
+    val = (record,date)
+    print("Sending Request as follows: " + check_string_1)
+    myCursor_l.execute(check_string_1, val)
+    connection_l.commit()
+    connection_l.close()
+
 def getSatudayByDate(date):
     connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_2 = connection_2.cursor()
     check_string_2 = "SELECT * FROM saturday_req where date = %s"
+    val=(date)
+    print("Sending Request as follows: " + check_string_2)
+    myCursor_2.execute(check_string_2,val)
+    my_table_2 = myCursor_2.fetchall()
+    print(my_table_2)
+    connection_2.close()
+    return my_table_2
+
+def getPTOByDate(date):
+    connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_2 = connection_2.cursor()
+    check_string_2 = "SELECT * FROM month where date = %s"
     val=(date)
     print("Sending Request as follows: " + check_string_2)
     myCursor_2.execute(check_string_2,val)
@@ -84,7 +118,16 @@ def sendToDB(ownerID, ownerName, ptolist):
                     updateRequirements(req[0][2],req[0][3],req[0][4],req[0][5]-1,str(record['date']))
                     # print(req[5])
         else:
-            print("LA2AAAA")
+            if record['title']=="PTO":
+            # x=re.split('(|, |)|,',str(getUserById(ownerID)))
+            #need to check on the date to fetch saturday requirements from tht date
+                req = getPTOByDate(str(record['date']))
+                # print(req[0])
+                if len(req) != 0:
+                    update_PTO(str(record['date']),req[0][1]-1)
+                            #print(req[2])
+                else:
+                    insert_PTO(str(record['date']),7)
 
 def login_db(user, password):
     pool = 0
@@ -261,7 +304,15 @@ def post_sat():
     update_saturday(payload['pool_a_level_1'], payload['pool_a_level_2'], payload['pool_b_level_1'], payload['pool_b_level_2'],payload['date'])
     print("########################### hakhrog men savesat ###########################")
     return jsonify({'status': "OK"})
-    
+
+@app.route('/savepto', methods=['POST'])
+def post_pto():
+    print("########################### dakhalt pto ###########################")
+    payload = request.json
+    check_PTO(payload['ptolist'])
+    print("########################### hakhrog men pto ###########################")
+    return jsonify({'status': "OK"})
+ 
 @app.route('/getUsers', methods=['GET'])
 def get_users():
     fetch_users()
