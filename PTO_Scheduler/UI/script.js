@@ -4,6 +4,8 @@
 
 let nav = 1;
 var x;
+var listPTO=[];
+var pushed=false
 var current_user = localStorage.getItem['current_user']
 currentUserPool =localStorage.getItem('current_user')[4]
 currentUserLevel =localStorage.getItem('current_user')[6]
@@ -37,6 +39,7 @@ var owner_ = localStorage.getItem('user');
 console.log(owner_);
 console.log(events);
 flag= false;
+flagPTO= false;
 satFlag=true;
 //Saturdays:
 //this should be customized later or keep as default
@@ -72,6 +75,43 @@ function openModal(date) {
   var invertedDateObject = new Date(invertedDate);
   var selectobject = document.getElementById("eventTitleInput"); 
   var checker;
+  console.log(listPTO)
+for(i=0;i<listPTO.length;i++){
+  console.log("CHECKER: " + listPTO[i][1])
+  console.log("DATE: "+listPTO[i][0])
+  console.log("LENGTH: " + listPTO.length)
+    if(listPTO[i][0]==invertedDate && listPTO[i][1]<=0){
+      for(j=0;j<selectobject.length;j++){
+        console.log("PTO WALA LA2"+selectobject.options[j].value)
+        if(selectobject.options[j].value == 'PTO'){
+          console.log("oki doki")
+          console.log(false)
+          selectobject.remove(j);
+          flagPTO=false;
+          getPTOReq();
+    }
+  } 
+}else if(listPTO[i][0]==invertedDate&& listPTO[i][1]>0){
+      if(flagPTO==false){
+        console.log(true)
+        const opt = document.createElement("option");
+        opt.value = "PTO";
+        opt.text = "PTO";
+        selectobject.add(opt, null);
+        flagPTO=true;
+        getPTOReq();
+      }
+    
+  } else if(listPTO[i][0]!=invertedDate&&flagPTO==false){
+    console.log(true)
+        const opt = document.createElement("option");
+        opt.value = "PTO";
+        opt.text = "PTO";
+        selectobject.add(opt, null);
+        flagPTO=true;
+        getPTOReq();
+  }
+  }
   console.log("********************")
   console.log(currentUserTitle)
   //console.log(poolalevel1)
@@ -323,6 +363,7 @@ function send_to_server(){
 		}
 		console.log("hakhrog men el async");
 	})();
+  getPTOReq();
 	//Send data to server. remove user, events
 	localStorage.removeItem("user");
 	localStorage.removeItem("events");
@@ -401,7 +442,36 @@ function getSaturdayReq(dayString){
     poolblevel1=requirement[4];
     poolblevel2=requirement[5];
     satData=sat
+    getPTOReq();
     openModal(dayString);
+	})();
+  console.log("khalast fetching saturday")
+  
+}
+function getPTOReq(dayString){
+  saturdaysFetched=[];
+  (async () => {
+		const rawResponse = await fetch('http://localhost:8080/getPTOReq', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+		});
+		const sat = await rawResponse.json();
+		// requirement = sat[0];
+    //console.log(sat)
+    if(pushed==false){
+      for(i=0;i<sat.length;i++){
+        listPTO.push([sat[i][0],sat[i][1]]);
+      }
+    pushed=true
+    } else {
+      listPTO=[];
+        for(i=0;i<sat.length;i++){
+        listPTO.push([sat[i][0],sat[i][1]]);
+        }
+    }
 	})();
 
   console.log("khalast fetching saturday")
@@ -457,7 +527,7 @@ function getSaturdayReq(dayString){
 // 	})();
 // }
 
-
+getPTOReq();
 initButtons();
 load();
 // function redirecttohomepage(){

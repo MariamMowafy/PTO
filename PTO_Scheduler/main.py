@@ -9,6 +9,17 @@ import re
 #we get id from savelist //done
 #minus from correct pool and level
 #update db on chosen sat id
+def fetch_pto():
+    connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_2 = connection_2.cursor()
+    check_string_2 = "SELECT date,pto FROM month"
+    print("Sending Request as follows: " + check_string_2)
+    myCursor_2.execute(check_string_2)
+    my_table_2 = myCursor_2.fetchall()
+    print(my_table_2)
+    connection_2.close()
+    return my_table_2
+
 def insert_PTO(date,pto):
     connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_l = connection_l.cursor()
@@ -124,7 +135,7 @@ def sendToDB(ownerID, ownerName, ptolist):
                 req = getPTOByDate(str(record['date']))
                 # print(req[0])
                 if len(req) != 0:
-                    update_PTO(str(record['date']),req[0][1]-1)
+                    update_PTO(str(record['date']),req[0][2]-1)
                             #print(req[2])
                 else:
                     insert_PTO(str(record['date']),7)
@@ -296,6 +307,11 @@ def get_counts():
 def get_sat():
     fetch_saturday()
     return jsonify(fetch_saturday())
+
+@app.route('/getPTOReq', methods=['GET'])
+def get_pto():
+    fetch_pto()
+    return jsonify(fetch_pto())
 
 @app.route('/savesat', methods=['POST'])
 def post_sat():
