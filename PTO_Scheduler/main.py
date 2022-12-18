@@ -12,7 +12,7 @@ import re
 def fetch_pto():
     connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_2 = connection_2.cursor()
-    check_string_2 = "SELECT date,pto FROM month"
+    check_string_2 = "SELECT date,pto,public FROM month"
     print("Sending Request as follows: " + check_string_2)
     myCursor_2.execute(check_string_2)
     my_table_2 = myCursor_2.fetchall()
@@ -31,11 +31,33 @@ def insert_PTO(date,pto):
     connection_l.commit()
     connection_l.close()
 
+def insert_public(date,public):
+    connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_l = connection_l.cursor()
+    print("Ready To pass value to DB")
+    check_string_1 = "INSERT INTO month (date, pto,public) VALUES (%s, 8,%s)"
+    val = (date, public)
+    print("Sending Request as follows: " + check_string_1)
+    myCursor_l.execute(check_string_1, val)
+    connection_l.commit()
+    connection_l.close()
+
 def update_PTO(date,record):
     connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_l = connection_l.cursor()
     print("Ready To pass value to DB")
     check_string_1 = "UPDATE `month` SET `pto`= %s WHERE `date` = %s"
+    val = (record,date)
+    print("Sending Request as follows: " + check_string_1)
+    myCursor_l.execute(check_string_1, val)
+    connection_l.commit()
+    connection_l.close()
+
+def update_public(date,record):
+    connection_l = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_l = connection_l.cursor()
+    print("Ready To pass value to DB")
+    check_string_1 = "UPDATE `month` SET `public`= %s WHERE `date` = %s"
     val = (record,date)
     print("Sending Request as follows: " + check_string_1)
     myCursor_l.execute(check_string_1, val)
@@ -139,6 +161,17 @@ def sendToDB(ownerID, ownerName, ptolist):
                             #print(req[2])
                 else:
                     insert_PTO(str(record['date']),7)
+            else:
+                if record['title']=="Public":
+            # x=re.split('(|, |)|,',str(getUserById(ownerID)))
+            #need to check on the date to fetch saturday requirements from tht date
+                    req = getPTOByDate(str(record['date']))
+                    # print(req[0])
+                    if len(req) != 0:
+                        update_public(str(record['date']),req[0][3]-1)
+                                #print(req[2])
+                    else:
+                        insert_public(str(record['date']),7)
 
 def login_db(user, password):
     pool = 0
@@ -210,15 +243,40 @@ def fetch_saturday():
     connection_2.close()
     return my_table_2
 
-def fetch_counts():
+def get_dates():
     connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
     myCursor_2 = connection_2.cursor()
-    check_string_2 = "SELECT SUM(ptolist LIKE '%\"date\": \"1/7/2023\", \"title\": \"Saturday\"%') AS \"1/7/2023\", SUM(ptolist LIKE '%\"date\": \"1/14/2023\", \"title\": \"Saturday\"%') AS \"1/14/2023\", SUM(ptolist LIKE '%\"date\": \"1/21/2023\", \"title\": \"Saturday\"%') AS \"1/14/2023\", SUM(ptolist LIKE '%\"date\": \"1/28/2023\", \"title\": \"Saturday\"%') AS \"1/28/2023\" FROM pto_record;"
-    # val = (date)
+    check_string_2 = "SELECT date FROM saturday_req"
     print("Sending Request as follows: " + check_string_2)
     myCursor_2.execute(check_string_2)
     my_table_2 = myCursor_2.fetchall()
+    #print(type(my_table_2[0][0]))
     print(my_table_2)
+    connection_2.close()
+    return my_table_2
+
+def fetch_counts():
+    dates_raw = get_dates()
+    dates=[]
+    for i in range(len(dates_raw)):
+        dates.append(dates_raw[i][0])
+    print(dates)
+    connection_2 = pymysql.connect(host='localhost', user='root', password='', db='ptodb')
+    myCursor_2 = connection_2.cursor()
+    if (len(dates) == 4):
+        check_string_2 = "SELECT SUM(ptolist LIKE %s), SUM(ptolist LIKE %s), SUM(ptolist LIKE %s), SUM(ptolist LIKE %s) FROM pto_record;"
+        val = (("%\"date\": \""+dates[0]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[1]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[2]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[3]+"\", \"title\": \"Saturday\"%"))
+    if (len(dates) == 5):
+        check_string_2 = "SELECT SUM(ptolist LIKE %s) , SUM(ptolist LIKE %s) , SUM(ptolist LIKE %s) , SUM(ptolist LIKE %s) FROM pto_record;"
+        val = (("%\"date\": \""+dates[0]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[1]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[2]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[3]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[4]+"\", \"title\": \"Saturday\"%"))
+    if (len(dates) == 3):
+        check_string_2 = "SELECT SUM(ptolist LIKE %s) , SUM(ptolist LIKE %s), SUM(ptolist LIKE %s) , SUM(ptolist LIKE %s) FROM pto_record;"
+        val = (("%\"date\": \""+dates[0]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[1]+"\", \"title\": \"Saturday\"%"),("%\"date\": \""+dates[2]+"\", \"title\": \"Saturday\"%"))
+    #print("Sending Request as follows: " + check_string_2)
+    print(val)
+    myCursor_2.execute(check_string_2,val)
+    my_table_2 = myCursor_2.fetchall()
+    #print(my_table_2)
     connection_2.close()
     return my_table_2
 
@@ -357,4 +415,4 @@ def login():
 
 if __name__ == '__main__':
     print("Starting . . . ")
-    app.run(host='localhost', port=8080, debug=True)
+    app.run(host='localhost', port=8080, debug=True,threaded = True)

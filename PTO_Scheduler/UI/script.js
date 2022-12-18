@@ -5,7 +5,9 @@
 let nav = 1;
 var x;
 var listPTO=[];
-var pushed=false
+var listPublic=[];
+var pushedPTO=false
+var pushedPublic=false
 var current_user = localStorage.getItem['current_user']
 currentUserPool =localStorage.getItem('current_user')[4]
 currentUserLevel =localStorage.getItem('current_user')[6]
@@ -40,6 +42,7 @@ console.log(owner_);
 console.log(events);
 flag= false;
 flagPTO= false;
+flagPublic= false;
 satFlag=true;
 //Saturdays:
 //this should be customized later or keep as default
@@ -76,11 +79,78 @@ function openModal(date) {
   var selectobject = document.getElementById("eventTitleInput"); 
   var checker;
   console.log(listPTO)
+  console.log(listPublic)
+  a = JSON.stringify(listPTO);
+  b = JSON.stringify(listPublic);
+  console.log("$$$$$$$$$$$$$$$" + a.indexOf(invertedDate) + "$$$$$$$$$$$$$$$")
+
+  if (a.indexOf(invertedDate)==-1 && flagPublic==false) {
+    console.log(true)
+      const opt = document.createElement("option");
+      opt.value = "Public";
+      opt.text = "Public";
+      selectobject.add(opt, null);
+      flagPublic=true;
+      getPublicReq();
+  }
+
+else{
+for(i=0;i<listPublic.length;i++){
+  console.log("CHECKER: " + listPublic[i][1])
+  console.log("DATE: "+listPublic[i][0])
+  console.log("LENGTH: " + listPublic.length)
+  if(listPublic[i][0]==invertedDate && listPublic[i][1]<=0){
+      for(j=0;j<selectobject.length;j++){
+        console.log("public WALA LA2"+selectobject.options[j].value)
+        if(selectobject.options[j].value == 'Public'){
+          console.log("oki doki")
+          console.log(false)
+          selectobject.remove(j);
+          flagPublic=false;
+          console.log
+          getPublicReq();
+    }
+  } 
+}else if(listPublic[i][0]==invertedDate&& listPublic[i][1]>0){
+      if(flagPublic==false){
+        console.log(true)
+        const opt = document.createElement("option");
+        opt.value = "Public";
+        opt.text = "Public";
+        selectobject.add(opt, null);
+        flagPublic=true;
+        getPublicReq();
+      }
+    
+  } else if(listPublic[i][0]==invertedDate && i==listPublic.length-1 && flagPublic==false){
+      console.log(true)
+      const opt = document.createElement("option");
+      opt.value = "Public";
+      opt.text = "Public";
+      selectobject.add(opt, null);
+      flagPublic=true;
+      getPublicReq();
+  
+  }
+  }
+  
+}
+  if (a.indexOf(invertedDate)==-1 && flagPTO==false) {
+    console.log(true)
+      const opt = document.createElement("option");
+      opt.value = "PTO";
+      opt.text = "PTO";
+      selectobject.add(opt, null);
+      flagPTO=true;
+      getPTOReq();
+  }
+
+else{
 for(i=0;i<listPTO.length;i++){
   console.log("CHECKER: " + listPTO[i][1])
   console.log("DATE: "+listPTO[i][0])
   console.log("LENGTH: " + listPTO.length)
-    if(listPTO[i][0]==invertedDate && listPTO[i][1]<=0){
+  if(listPTO[i][0]==invertedDate && listPTO[i][1]<=0){
       for(j=0;j<selectobject.length;j++){
         console.log("PTO WALA LA2"+selectobject.options[j].value)
         if(selectobject.options[j].value == 'PTO'){
@@ -103,7 +173,7 @@ for(i=0;i<listPTO.length;i++){
         getPTOReq();
       }
     
-  } else if(listPTO[i][0]==invertedDate && i==listPTO.length-1 && flag==false){
+  } else if(listPTO[i][0]==invertedDate && i==listPTO.length-1 && flagPTO==false){
       console.log(true)
       const opt = document.createElement("option");
       opt.value = "PTO";
@@ -111,8 +181,11 @@ for(i=0;i<listPTO.length;i++){
       selectobject.add(opt, null);
       flagPTO=true;
       getPTOReq();
+  
   }
   }
+  
+}
   console.log("********************")
   console.log(currentUserTitle)
   //console.log(poolalevel1)
@@ -345,6 +418,7 @@ function executeEvent(){
 function send_to_server(){
 
 	(async () => {
+    try{
     console.log("dakhalt el async");
 		const rawResponse = await fetch('http://localhost:8080/savelist', {
 			method: 'POST',
@@ -354,7 +428,7 @@ function send_to_server(){
 			},
 			body: JSON.stringify({"ownerID":1, "name":owner_, "pto":events})
 		});
-		const status_ = await rawResponse.json();
+    const status_ = await rawResponse.json();
 		console.log(status_['status']);
 		
 		if (status_['status'] == "OK") {
@@ -363,8 +437,13 @@ function send_to_server(){
 			console.log("Script NOT OK");
 		}
 		console.log("hakhrog men el async");
-	})();
+  }
+    catch(error){
+      alert("Please logout and login again")
+    }
+
   getPTOReq();
+  getPublicReq();
 	//Send data to server. remove user, events
 	localStorage.removeItem("user");
 	localStorage.removeItem("events");
@@ -374,10 +453,11 @@ function send_to_server(){
 	events = [];
 	load();
   console.log('sending to server');
+  open_thanks();
   update_saturday();
-
+	})();
   
-	//window.open("./index.html","_self");
+
 	
 	/*console.log("Clicked~!!!!!");
 	var xhr = new XMLHttpRequest();
@@ -390,7 +470,9 @@ function send_to_server(){
 	}));*/
 	
 }
-
+function open_thanks(){
+  window.open("./thanks.html","_self");
+}
 function deleteEvent() {
   events = events.filter(e => e.date !== clicked);
   localStorage.setItem('events', JSON.stringify(events));
@@ -410,7 +492,11 @@ function initButtons() {
   document.getElementById('deleteButton').addEventListener('click', deleteEvent);
   document.getElementById('closeButton').addEventListener('click', closeModal);
   document.getElementById('submitButton').addEventListener('click', send_to_server);
+  document.getElementById('logoutButton').addEventListener('click', logout);
   //document.getElementById('homepage').addEventListener('click', redirecttohomepage);
+}
+function logout(){
+  window.open("./index.html","_self");
 }
 
 function getSaturdayReq(dayString){
@@ -444,6 +530,7 @@ function getSaturdayReq(dayString){
     poolblevel2=requirement[5];
     satData=sat
     getPTOReq();
+    getPublicReq();
     openModal(dayString);
 	})();
   console.log("khalast fetching saturday")
@@ -462,15 +549,44 @@ function getPTOReq(dayString){
 		const sat = await rawResponse.json();
 		// requirement = sat[0];
     //console.log(sat)
-    if(pushed==false){
+    if(pushedPTO==false){
       for(i=0;i<sat.length;i++){
         listPTO.push([sat[i][0],sat[i][1]]);
       }
-    pushed=true
+    pushedPTO=true
     } else {
       listPTO=[];
         for(i=0;i<sat.length;i++){
         listPTO.push([sat[i][0],sat[i][1]]);
+        }
+    }
+	})();
+
+  console.log("khalast fetching saturday")
+  
+}
+function getPublicReq(dayString){
+  saturdaysFetched=[];
+  (async () => {
+		const rawResponse = await fetch('http://localhost:8080/getPTOReq', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+		});
+		const sat = await rawResponse.json();
+		// requirement = sat[0];
+    console.log(sat)
+    if(pushedPublic==false){
+      for(i=0;i<sat.length;i++){
+        listPublic.push([sat[i][0],sat[i][2]]);
+      }
+    pushedPublic=true
+    } else {
+      listPublic=[];
+        for(i=0;i<sat.length;i++){
+          listPublic.push([sat[i][0],sat[i][2]]);
         }
     }
 	})();
@@ -529,6 +645,7 @@ function getPTOReq(dayString){
 // }
 
 getPTOReq();
+getPublicReq();
 initButtons();
 load();
 // function redirecttohomepage(){
